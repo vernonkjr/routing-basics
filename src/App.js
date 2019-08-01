@@ -1,77 +1,10 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import createHistory from 'history/createBrowserHistory';
-
-const Route = ({ path, component }, { location } ) => {
-  const pathname = location.pathname;
-  if (pathname.match(path)) {
-    return (
-      React.createElement(component)
-    );
-  } else {
-    return null;
-  }
-}
-
-Route.contextTypes = {
-  location: PropTypes.object,
-};
-
-const Link = ({ to, children }, { history }) => (
-  <a
-    onClick={(e) => {
-      e.preventDefault();
-      history.push(to);
-    }}
-    href={to}
-  >
-    {children}
-  </a>
-);
-
-Link.contextTypes = {
-  history: PropTypes.object,
-};
-
-class Redirect extends React.Component {
-  static contextTypes = {
-    history: PropTypes.object,
-  }
-
-  componentDidMount() {
-    const history = this.context.history;
-    const to = this.props.to;
-    history.push(to);
-  }
-
-  render() {
-    return null;
-  }
-}
-
-class Router extends React.Component {
-  static childContextTypes = {
-    history: PropTypes.object,
-    location: PropTypes.object,
-  };
-
-  constructor(props) {
-    super(props);
-    this.history = createHistory();
-    this.history.listen(() => this.forceUpdate());
-  }
-
-  getChildContext() {
-    return {
-      history: this.history,
-      location: window.location,
-    }
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+} from 'react-router-dom';
 
 const App = () => (  
   <Router>
@@ -101,9 +34,24 @@ const App = () => (
         </ul>
 
         <hr />
+        <Route path='/atlantic/ocean' render={() => (
+          <div>
+            <h3>Atlantic Ocean - Again!</h3>
+            <p>
+              Also known as "The Pond."
+            </p>
+          </div>
+        )} 
+          
+        />
         <Route path='/atlantic' component={Atlantic} /> 
         <Route path='/pacific' component={Pacific} />  
-        <Route path='/black-sea' component={BlackSea} />      
+        <Route path='/black-sea' component={BlackSea} />
+        <Route exact path='/' render={() => (
+          <h3>
+            Welcome! Select a body of saline water above.
+          </h3>
+        )} />      
       </div>
       </Router>
     );
